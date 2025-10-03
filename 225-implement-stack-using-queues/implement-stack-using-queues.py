@@ -1,25 +1,24 @@
 class MyStack:
 
     def __init__(self):
-        self.main_q = []
-        self.helper_q = [] 
+        self.stk1 = []
+        self.stk2 = [] 
 
     def push(self, x: int) -> None:
-        self.helper_q.append(x)
-        self.helper_q.extend(self.main_q)
-        self.main_q.clear()
-
-        self.helper_q , self.main_q = self.main_q , self.helper_q
-
+        while self.stk1:
+            self.stk2.append(self.stk1.pop())
+        self.stk1.append(x)
+        while self.stk2 :
+            self.stk1.append(self.stk2.pop()) 
 
     def pop(self) -> int:
-        val = self.main_q[0]
-        self.main_q = self.main_q[1:]
+        val = self.stk1[0]
+        self.stk1 = self.stk1[1:]
         return val
 
     def top(self) -> int:
-        return self.main_q[0]
+        return self.stk1[0]
 
     def empty(self) -> bool:
-            return len(self.main_q) == 0
+            return len(self.stk1) == 0
         
