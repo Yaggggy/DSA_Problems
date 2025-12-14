@@ -1,4 +1,15 @@
 class Solution:
-    def numberOfWays(self, s: str) -> int:
-        if (q:=s.count('S'))==0 or q%2: return 0
-        return prod(len(m[1])+1 for m in finditer(r'(?<=S)P*S(P*)S',s))%(10**9+7)
+    def numberOfWays(self, corridor):
+        MOD = 10**9 + 7
+        zero = 0
+        one = 0
+        two = 1
+
+        for thing in corridor:
+            if thing == 'S':
+                zero = one
+                one, two = two, one
+            else:
+                two = (two + zero) % MOD
+
+        return zero
