@@ -1,13 +1,11 @@
 class Solution:
     def countPartitions(self, nums: List[int]) -> int:
-        
-        par = 1 
-        n = len(nums)
-        ans = 0
-        while par != n:
-            l = nums[:par]
-            r = nums[par:]
-            if abs(sum(l) - sum(r)) % 2 == 0 :
-                ans += 1 
-            par += 1 
-        return ans
+        total = sum(nums)
+        curr,count = 0,0
+        for i in range(len(nums)-1):
+            num = nums[i]
+            curr+=num
+            right = total-curr
+            if abs(curr-right)%2==0:
+                count+=1
+        return count
