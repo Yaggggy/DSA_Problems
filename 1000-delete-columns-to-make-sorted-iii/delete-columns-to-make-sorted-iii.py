@@ -1,20 +1,14 @@
-from typing import List
-
 class Solution:
-    def minDeletionSize(self, strs: List[str]) -> int:
-        n = len(strs)
-        m = len(strs[0])
-        
-        dp = [1] * m  
-        
-        for j in range(m):
-            for i in range(j):
-                valid = True
-                for r in range(n):
-                    if strs[r][i] > strs[r][j]:
-                        valid = False
+    def minDeletionSize(self, strs: list[str]) -> int:
+        n = len(strs[0])
+        dp = [1] * n
+        for i in range(1, n):
+            for j in range(i):
+                ok = True
+                for row in strs:
+                    if row[j] > row[i]:
+                        ok = False
                         break
-                if valid:
-                    dp[j] = max(dp[j], dp[i] + 1)
-        
-        return m - max(dp)
+                if ok:
+                    dp[i] = max(dp[i], dp[j] + 1)
+        return n - max(dp)
