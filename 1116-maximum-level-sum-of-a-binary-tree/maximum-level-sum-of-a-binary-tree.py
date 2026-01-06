@@ -4,39 +4,34 @@
 #         self.val = val
 #         self.left = left
 #         self.right = right
+
 class Solution:
-    def maxLevelSum(self, root: Optional[TreeNode]) -> int:
-        max_vals = []
-        queue = deque([root])
+    def maxLevelSum(self, root):
+        if not root:
+            return 0
+
+        queue = [root]
+        max_level = 1
+        max_sum = float('-inf')
         level = 1
 
-        max_val = None
-        max_level = None
+        while queue:
+            level_sum = 0
+            next_level = []
 
-        while(queue):
+            for node in queue:
+                level_sum += node.val
 
-            total = 0
-            n = len(queue)
-            for _ in range(n):
+                if node.left:
+                    next_level.append(node.left)
+                if node.right:
+                    next_level.append(node.right)
 
-                node = queue.popleft()
-                total += node.val
-
-                if(node.left != None):
-                    queue.append(node.left)
-                
-                if(node.right != None):
-                    queue.append(node.right)
-
-            
-            if(max_val == None):
-                max_val = total
+            if level_sum > max_sum:
+                max_sum = level_sum
                 max_level = level
 
-            elif(total > max_val):
-                max_val = total
-                max_level = level
-
+            queue = next_level
             level += 1
 
         return max_level
