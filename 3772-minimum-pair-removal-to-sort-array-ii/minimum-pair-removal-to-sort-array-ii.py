@@ -1,49 +1,37 @@
-from sortedcontainers import SortedList
-
-
 class Solution:
-  def minimumPairRemoval(self, nums: list[int]) -> int:
-    n = len(nums)
-    ans = 0
-    inversionsCount = sum(nums[i + 1] < nums[i] for i in range(n - 1))
-    nextIndices = [i + 1 for i in range(n)]
-    prevIndices = [i - 1 for i in range(n)]
-    pairSums = SortedList((a + b, i)
-                          for i, (a, b) in enumerate(itertools.pairwise(nums)))
-
-    while inversionsCount > 0:
-      ans += 1
-      smallestPair = pairSums.pop(0)
-      pairSum, currIndex = smallestPair
-      nextIndex = nextIndices[currIndex]
-      prevIndex = prevIndices[currIndex]
-
-      if prevIndex >= 0:
-        oldPairSum = nums[prevIndex] + nums[currIndex]
-        newPairSum = nums[prevIndex] + pairSum
-        pairSums.remove((oldPairSum, prevIndex))
-        pairSums.add((newPairSum, prevIndex))
-        if nums[prevIndex] > nums[currIndex]:
-          inversionsCount -= 1
-        if nums[prevIndex] > pairSum:
-          inversionsCount += 1
-
-      if nums[nextIndex] < nums[currIndex]:
-        inversionsCount -= 1
-
-      nextNextIndex = nextIndices[nextIndex] if nextIndex < n else n
-      if nextNextIndex < n:
-        oldPairSum = nums[nextIndex] + nums[nextNextIndex]
-        newPairSum = pairSum + nums[nextNextIndex]
-        pairSums.remove((oldPairSum, nextIndex))
-        pairSums.add((newPairSum, currIndex))
-        if nums[nextNextIndex] < nums[nextIndex]:
-          inversionsCount -= 1
-        if nums[nextNextIndex] < pairSum:
-          inversionsCount += 1
-        prevIndices[nextNextIndex] = currIndex
-
-      nextIndices[currIndex] = nextNextIndex
-      nums[currIndex] = pairSum
-
-    return ans
+    def minimumPairRemoval(self, nums: List[int]) -> int:
+        prev = [i-1 for i in range(len(nums))]
+        next = [i+1 for i in range(len(nums))]
+        prev.append(len(nums) - 1)
+        next[-1] = -1
+        next.append(0)
+        q = []
+        bad = 0
+        for i in range(1, len(nums)):
+            if nums[i-1] > nums[i]:
+                bad += 1
+            heappush(q, (nums[i-1] + nums[i], i))
+        ans = 0
+        while bad:
+            # print(ans, bad, nums, q)
+            sum, r = heappop(q)
+            l = prev[r]
+            if l == -1 or nums[l] + nums[r] != sum:
+                continue
+            next[l] = next[r]
+            prev[next[r]] = l
+            if nums[l] > nums[r]:
+                bad -= 1
+            ll = prev[l]
+            rr = next[r]
+            if ll != -1:
+                bad += (nums[ll] > sum) - (nums[ll] > nums[l])
+                heappush(q, (nums[ll] + sum, l))
+            if rr != -1:
+                bad += (sum > nums[rr]) - (nums[r] > nums[rr])
+                heappush(q, (nums[rr] + sum, rr))
+            nums[l] = sum
+            nums[r] = inf
+            ans += 1
+        return ans
+            
