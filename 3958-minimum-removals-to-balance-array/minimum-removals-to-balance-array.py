@@ -1,15 +1,9 @@
 class Solution:
     def minRemoval(self, nums: List[int], k: int) -> int:
         nums.sort()
-        n = len(nums)
+        l = 0
         
-        left = 0
-        best = 0
-        
-        for right in range(n):
-            while nums[right] > nums[left] * k:
-                left += 1
-            
-            best = max(best, right - left + 1)
-        
-        return n - best
+        for r in range(len(nums)):
+            if nums[r] > nums[l] * k:
+                l += 1
+        return l
