@@ -1,20 +1,12 @@
 class Solution:
-    def longestBalanced(self, nums: list[int]) -> int:
-        n = len(nums)
-        length = 0
-
-        for i in range(n):
-            odd = set()
-            even = set()
-
-            for j in range(i, n):
-
-                if nums[j] % 2 == 0:
-                    even.add(nums[j])
-                else:
-                    odd.add(nums[j])
-
-                if len(odd) == len(even):
-                    length = max(length, j - i + 1)
-
-        return length
+    def longestBalanced(self, nums: List[int]) -> int:
+        best = 0
+        balance = tuple([set(), set()])
+        while len(nums) > best:
+            balance[0].clear(); balance[1].clear()
+            for r, x in enumerate(reversed(nums), start=1):
+                balance[x & 1].add(x)
+                if len(balance[0]) == len(balance[1]):
+                    best = max(best, r)
+            nums.pop()
+        return best
