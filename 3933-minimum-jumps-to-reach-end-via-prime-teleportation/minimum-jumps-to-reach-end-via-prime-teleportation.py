@@ -1,71 +1,38 @@
-from collections import defaultdict, deque
+MX = 1_000_001
+factors = [[] for _ in range(MX)]
+for i in range(2, MX):
+    if not factors[i]:
+        for j in range(i, MX, i):
+            factors[j].append(i)
+
 
 class Solution:
-    def minJumps(self, nums: list[int]) -> int:
-        def factors(x):
-            res = []
-            while x > 1:
-                p = smallestPrimeFact[x]
-                res.append(p)
-                while x % p == 0:
-                    x //= p
-            return list(dict.fromkeys(res))
-        
+    def minJumps(self, nums: List[int]) -> int:
         n = len(nums)
-        if n == 1:
-            return 0
-        maxi = max(nums)
-        
-        smallestPrimeFact = list(range(maxi + 1))
-        
-        for i in range(2, int(maxi**0.5) + 1):
-            
-            if smallestPrimeFact[i] == i:
-                step = i
-                s = i **2
-                
-                for j in range(s, maxi + 1, step):
-                    
-                    if smallestPrimeFact[j] == j:
-                        smallestPrimeFact[j] = i
-        
-        mapPrime = defaultdict(list)
-        
-        for i, v in enumerate(nums):
-            
-            if v >= 2:
-                for p in factors(v):
-                    mapPrime[p].append(i)
-        
-        visited = [False] * n
-        used = set()
-        queue = deque([0])
-        visited[0] = True
-        cnt = 0
-        
-        while queue:
-            
-            for _ in range(len(queue)):
-                i = queue.popleft()
-                
-                if i == n - 1:
-                    return cnt
-                v = nums[i]
-                
-                if v >= 2 and smallestPrimeFact[v] == v and v not in used:
-                    for j in mapPrime.get(v, []):
-                        if not visited[j]:
-                            visited[j] = True
-                            queue.append(j)
-                    used.add(v)
-                
-                if i + 1 < n and not visited[i + 1]:
-                    visited[i + 1] = True
-                    queue.append(i + 1)
-                
-                if i - 1 >= 0 and not visited[i - 1]:
-                    visited[i - 1] = True
-                    queue.append(i - 1)
-            
-            cnt += 1
-        return -1
+        edges = defaultdict(list)
+        for i, a in enumerate(nums):
+            if len(factors[a]) == 1:
+                edges[a].append(i)
+        res = 0
+        seen = [False] * n
+        seen[-1] = True
+        q = [n - 1]
+        while True:
+            q2 = []
+            for i in q:
+                if i == 0:
+                    return res
+                if i > 0 and not seen[i - 1]:
+                    seen[i - 1] = True
+                    q2.append(i - 1)
+                if i < n - 1 and not seen[i + 1]:
+                    seen[i + 1] = True
+                    q2.append(i + 1)
+                for p in factors[nums[i]]:
+                    for j in edges[p]:
+                        if not seen[j]:
+                            seen[j] = True
+                            q2.append(j)
+                    edges[p].clear()
+            q = q2
+            res += 1
