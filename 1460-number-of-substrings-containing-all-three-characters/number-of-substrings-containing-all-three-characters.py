@@ -1,12 +1,16 @@
 class Solution:
     def numberOfSubstrings(self, s: str) -> int:
-        count = [0, 0, 0]
-        left = 0
-        result = 0
-        for right in range(len(s)):
-            count[ord(s[right]) - ord('a')] += 1
-            while all(count):
-                count[ord(s[left]) - ord('a')] -= 1
-                left += 1
-            result += left
-        return result
+        res=0
+        a=b=c=-1
+        for i,ch in enumerate(s):
+            if ch=='a':
+                a=i
+            if ch=='b':
+                b=i
+            if ch=='c':
+                c=i
+            res+=min(a,b,c)+1
+        return res                
+                
+
+        
