@@ -1,25 +1,25 @@
 class Solution:
     def maxActiveSectionsAfterTrade(self, s: str) -> int:
-        t = "1" + s + "1"
+        prev = tail = 0
+        total = s.count("1")
+        ans = 0
+        hasmidones = False
+        for ch in s:
+            if ch == "1":
+                if tail and hasmidones:
+                    prev = tail
+                    tail = 0
+                elif prev:
+                    hasmidones = True
+            else:
+                if hasmidones:
+                    tail += 1
+                else:
+                    prev += 1
 
-        runs = []
-        i = 0
-        while i < len(t):
-            j = i
-            while j < len(t) and t[j] == t[i]:
-                j += 1
-            runs.append((t[i], j - i))
-            i = j
-
-        ones = s.count("1")
-        ans = ones
-
-        for i in range(1, len(runs) - 1):
-            if (
-                runs[i][0] == "1"
-                and runs[i - 1][0] == "0"
-                and runs[i + 1][0] == "0"
-            ):
-                ans = max(ans, ones + runs[i - 1][1] + runs[i + 1][1])
-
-        return ans
+            if prev and tail:
+                ans = max(ans, prev + tail)
+        
+        
+        return ans + total
+                
