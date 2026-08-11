@@ -1,20 +1,11 @@
-from typing import List
-
 class Solution:
     def missingInteger(self, nums: List[int]) -> int:
-        total = nums[0]
-
-        for i in range(1, len(nums)):
-            if nums[i] == nums[i - 1] + 1:
-                total += nums[i]
-            else:
-                break
-
-        seen = set(nums)
-
-        answer = total
-
-        while answer in seen:
-            answer += 1
-
-        return answer
+        prefix_sum = nums[0]
+        index = 1
+        while index < len(nums) and nums[index] == nums[index - 1] + 1:
+            prefix_sum += nums[index]
+            index += 1
+        present = set(nums)
+        while prefix_sum in present:
+            prefix_sum += 1
+        return prefix_sum
