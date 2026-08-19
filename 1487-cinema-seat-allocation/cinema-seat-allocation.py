@@ -1,23 +1,25 @@
 class Solution:
     def maxNumberOfFamilies(self, n: int, reservedSeats: List[List[int]]) -> int:
-        res = n*2
-        j=0
-        reservedSeats.sort()
+        reserved_map = defaultdict(set)
 
-        while j<len(reservedSeats):
-            cur_row = reservedSeats[j][0]
-            isle1,isle2left,isle2right,isle3=False,False,False,False
-            while j<len(reservedSeats) and reservedSeats[j][0]==cur_row:
-                seat = reservedSeats[j][1]
-                if seat==2 or seat==3: isle1=True
-                elif seat==4 or seat==5: isle2left=True
-                elif seat==6 or seat==7: isle2right=True
-                elif seat==8 or seat==9: isle3=True
-                j+=1
+        for row, seat in reservedSeats:
+            reserved_map[row].add(seat)
+        
+        total_groups = 0
+        
+        for row in reserved_map:
+            reserved = reserved_map[row]
             
-            if (isle1 and isle2right)or(isle3 and isle2left)or(isle2left and isle2right):
-                res-=2
-            elif isle1 or isle2left or isle2right or isle3:
-                res-=1
-
-        return res
+            can_place_left = all(seat not in reserved for seat in [2, 3, 4, 5])
+            can_place_middle = all(seat not in reserved for seat in [4, 5, 6, 7])
+            can_place_right = all(seat not in reserved for seat in [6, 7, 8, 9])
+            
+            if can_place_left and can_place_right:
+                total_groups += 2
+            elif can_place_left or can_place_middle or can_place_right:
+                total_groups += 1
+        
+        rows_with_no_reservations = n - len(reserved_map)
+        total_groups += rows_with_no_reservations * 2
+        
+        return total_groups
